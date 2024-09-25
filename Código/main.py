@@ -1,0 +1,1 @@
+from loja import acessar_loja
