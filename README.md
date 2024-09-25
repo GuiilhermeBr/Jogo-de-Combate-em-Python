@@ -15,3 +15,5 @@ de seus inimigos, podendo vender esses itens.
 adquiridos por eles. Além disso, é possível conseguir experiência dos
 montros enfrentados, conseguindo ficar mais forte, não dependendo apenas
 dos itens e equipamentos.
+
+!!! Projeto Em Andamento !!!
