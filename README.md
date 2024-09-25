@@ -1,1 +1,0 @@
-# Um jogo de perguntas e escolha feito a partir de Python no terminal
