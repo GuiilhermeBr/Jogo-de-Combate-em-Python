@@ -1,4 +1,5 @@
 import random as ra
+from nivel import verificar_nivel, aumentar_dano_usuario, aumentar_defesa_usuario
 from os import system as sy
 from time import sleep as sl
 
@@ -48,17 +49,23 @@ inventario = [{
     'Poção Grande': 0
 },{
     # Quantidade de itens para venda
-    'Item X': 10, 'Preço1': 10,
-    'Item Y': 5, 'Preço3': 20
 },{
     # Quantidade de Moedas
-    'Moedas': 50
+    'Moedas': 0
+},{
+    # Nível e Experiência do usuário
+    'Nível': 1,
+    'Experiência': 0
 }]
 
 
-def combate(nome_inimigo, dano_inimigo, vida_inimigo, vida_usuario, vida_max_usuario, chance_fuga, item_ganho, moedas_ganho):
+def combate(nome_inimigo, dano_inimigo, vida_inimigo, vida_usuario, vida_max_usuario, chance_fuga, item_ganho, moedas_ganho, experiencia_monstro):
     global inventario
     sy('cls')
+
+    # Variáveis para aumentar o dano e defesa do usuário com base no nível
+    porcentagem_dano_usuario = aumentar_dano_usuario()
+    porcentagem_defesa_usuario = aumentar_defesa_usuario()
 
     # Dando valor às variáveis principais
     dano_usuario = inventario[0]['Dano Espada']
@@ -94,14 +101,14 @@ Curar  (100% de chance) -> Digite 3'''))
             print('Você está com a vida no máximo! ')
             sl(2)
             sy('cls')
-            combate(nome_inimigo, dano_inimigo, vida_inimigo, vida_usuario, vida_max_usuario, chance_fuga, item_ganho, moedas_ganho)
+            combate(nome_inimigo, dano_inimigo, vida_inimigo, vida_usuario, vida_max_usuario, chance_fuga, item_ganho, moedas_ganho,  experiencia_monstro)
 
         # Detecta se não tem poções
         elif inventario[1]['Poção Pequena'] == 0 and inventario[1]['Poção Média'] == 0 and inventario[1]['Poção Grande'] == 0:
             print('Você não tem poções para usar agora! ')
             sl(2)
             sy('cls')
-            combate(nome_inimigo, dano_inimigo, vida_inimigo, vida_usuario, vida_max_usuario, chance_fuga, item_ganho, moedas_ganho)
+            combate(nome_inimigo, dano_inimigo, vida_inimigo, vida_usuario, vida_max_usuario, chance_fuga, item_ganho, moedas_ganho,  experiencia_monstro)
 
         # Decisão da poção que será utilizada
         while True:
@@ -113,7 +120,7 @@ Poção Grande  (Recupera 100 pontos) -> Digite 3
 Voltar para a escolha anterior      -> Digite 4''')))
 
                 if pocao == 4:
-                    combate(nome_inimigo, dano_inimigo, vida_inimigo, vida_usuario, vida_max_usuario, chance_fuga, item_ganho, moedas_ganho)
+                    combate(nome_inimigo, dano_inimigo, vida_inimigo, vida_usuario, vida_max_usuario, chance_fuga, item_ganho, moedas_ganho,  experiencia_monstro)
                 
                 elif pocao < 1 or pocao > 3:
                     print('\nValor inválido! Digite novamente: ')
@@ -217,7 +224,7 @@ Voltar para a escolha anterior                                        -> Digite 
         # Ataque rápido
         if ataque_usuario == 1:
             if numero_aleatorio_chance <= 80:
-                vida_inimigo -= dano_usuario // 2
+                vida_inimigo -= dano_usuario // 2 * porcentagem_dano_usuario
                 if vida_inimigo < 0:
                     vida_inimigo = 0
 
@@ -232,7 +239,7 @@ Ele ficou com {vida_inimigo} pontos de vida! ''')
         # Ataque normal
         if ataque_usuario == 2:
             if numero_aleatorio_chance <= 60:
-                vida_inimigo -= dano_usuario
+                vida_inimigo -= dano_usuario * porcentagem_dano_usuario
                 if vida_inimigo < 0:
                     vida_inimigo = 0
 
@@ -247,7 +254,7 @@ Ele ficou com {vida_inimigo} pontos de vida! ''')
         # Ataque forte
         if ataque_usuario == 3:
             if numero_aleatorio_chance <= 40:
-                vida_inimigo -= dano_usuario * 2
+                vida_inimigo -= dano_usuario * 2 * porcentagem_dano_usuario
                 if vida_inimigo < 0:
                     vida_inimigo = 0
 
@@ -270,7 +277,7 @@ Ele ficou com {vida_inimigo} pontos de vida! ''')
             sl(2)
 
             if numero_aleatorio_chance <= 80:
-                calculo_de_dano = (dano_inimigo // 2) - defesa_usuario
+                calculo_de_dano = (dano_inimigo // 2) - defesa_usuario * porcentagem_defesa_usuario
 
                 if calculo_de_dano > 0:
                     vida_usuario -= calculo_de_dano
@@ -294,7 +301,7 @@ Você ficou com {vida_usuario} pontos de vida restando. ''')
             sl(2)
 
             if numero_aleatorio_chance <= 60:
-                calculo_de_dano = dano_inimigo - defesa_usuario
+                calculo_de_dano = dano_inimigo - defesa_usuario * porcentagem_defesa_usuario
 
                 if calculo_de_dano > 0:
                     vida_usuario -= calculo_de_dano
@@ -318,7 +325,7 @@ Você ficou com {vida_usuario} pontos de vida restando. ''')
             sl(2)
 
             if numero_aleatorio_chance <= 40:
-                calculo_de_dano = (dano_inimigo * 2) - defesa_usuario
+                calculo_de_dano = (dano_inimigo * 2) - defesa_usuario * porcentagem_defesa_usuario
 
                 if calculo_de_dano > 0:
                     vida_usuario -= calculo_de_dano
@@ -341,7 +348,12 @@ Você ficou com {vida_usuario} pontos de vida restando. ''')
         quantidade_itens_aleatorio = ra.randint(1, 3)
 
         print('Você derrotou o inimigo! Parabéns! ')
-        print(f'Você ganhou {quantidade_itens_aleatorio} {item_ganho} e {moedas_ganho} moedas')
+        print(f'Você ganhou {experiencia_monstro} pontos de experiência! ')
+        sl(2)
+        inventario[4]['Experiência'] += experiencia_monstro
+        verificar_nivel()
+
+        print(f'Você também ganhou {quantidade_itens_aleatorio} {item_ganho} e {moedas_ganho} moedas')
         inventario[3]['Moedas'] += moedas_ganho
         inventario[2][item_ganho] += quantidade_itens_aleatorio
         sl(2)
@@ -349,6 +361,7 @@ Você ficou com {vida_usuario} pontos de vida restando. ''')
     elif vida_usuario == 0:
         print('\nVocê foi derrotado! ')
         sl(2)
+        sy('cls')
     
     else:
-        combate(nome_inimigo, dano_inimigo, vida_inimigo, vida_usuario, vida_max_usuario, chance_fuga, item_ganho, moedas_ganho)
+        combate(nome_inimigo, dano_inimigo, vida_inimigo, vida_usuario, vida_max_usuario, chance_fuga, item_ganho, moedas_ganho,  experiencia_monstro)

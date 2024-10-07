@@ -80,7 +80,7 @@ Sair da loja         -> Digite 4
                     print('Valor inválido! Digite novamente: ')
                     sl(3)
                     sy('cls')
-                    
+
                 vender = divisao[0].capitalize() + ' ' + divisao[1].capitalize()
                 
 
@@ -226,6 +226,4 @@ Foram adicionados {inventario[2][preco] * valor} moedas ao seu inventário, fica
 
             sy('cls')
             acessar_loja()
-
 acessar_loja()
-    
